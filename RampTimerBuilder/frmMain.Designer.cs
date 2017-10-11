@@ -391,6 +391,7 @@
             // 
             // btnDeletePreset
             // 
+            this.btnDeletePreset.Enabled = false;
             this.btnDeletePreset.FlatAppearance.BorderSize = 0;
             this.btnDeletePreset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDeletePreset.Image = ((System.Drawing.Image)(resources.GetObject("btnDeletePreset.Image")));

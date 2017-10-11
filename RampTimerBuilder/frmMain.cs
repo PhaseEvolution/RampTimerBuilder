@@ -725,6 +725,7 @@ namespace RampTimerBuilder
 
             Reg.Set_REG_MULTI_SZ(Microsoft.Win32.RegistryHive.CurrentUser, "SOFTWARE\\ML\\RampTimerBuilder", "SavesAndPresets", newPresetArray, Microsoft.Win32.RegistryValueKind.MultiString);
             cboSavesAndPresets.Items.RemoveAt(cboSavesAndPresets.SelectedIndex);
+            btnDeletePreset.Enabled = false;
         }
         #endregion
     }
