@@ -77,6 +77,9 @@ namespace RampTimerBuilder
         private void PopulateAudioDropDown()
         {
             var appDir = Environment.GetEnvironmentVariable("LocalAppData") + "\\RampTimerBuilder";
+            if (!Directory.Exists(appDir))
+                Directory.CreateDirectory(appDir);
+
             var soundFiles = Assembly.GetExecutingAssembly().GetManifestResourceNames();
             var unpackedFiles = Directory.GetFiles(appDir, "*.wav");
             foreach (var file in unpackedFiles)
