@@ -10,3 +10,16 @@ C:\Users\Mike Langford\documents\visual studio 2015\Projects\RampTimerBuilder\Ra
 C:\Users\Mike Langford\documents\visual studio 2015\Projects\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.csproj.ResolveComReference.cache
 C:\Users\Mike Langford\documents\visual studio 2015\Projects\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.frmMain.resources
 C:\Users\Mike Langford\Documents\Visual Studio 2015\Projects\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.About.resources
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.csprojResolveAssemblyReference.cache
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\Interop.WMPLib.dll
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.csproj.ResolveComReference.cache
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.About.resources
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.frmMain.resources
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.Properties.Resources.resources
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.csproj.GenerateResource.Cache
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.csproj.CoreCompileInputs.cache
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\bin\Debug\RampTimerBuilder.exe.config
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\bin\Debug\RampTimerBuilder.exe
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\bin\Debug\RampTimerBuilder.pdb
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.exe
+D:\Documents\Visual Studio 2017\Projects\Cloned\RampTimerBuilder\RampTimerBuilder\obj\Debug\RampTimerBuilder.pdb

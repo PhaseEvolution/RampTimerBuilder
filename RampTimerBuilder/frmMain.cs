@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualBasic;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -20,8 +22,8 @@ namespace RampTimerBuilder
         bool boolPaused = false;
         string AudioFile;
         Thread[] threadPoolIntervals = new Thread[0];
-        JukeBox jbBGAudio;
-        JukeBox jbIntervalAudio;
+        JukeBox2 jbBGAudio;
+        JukeBox2 jbIntervalAudio;
         About about = new About();
         #endregion
 
@@ -58,7 +60,7 @@ namespace RampTimerBuilder
             var soundFiles = Assembly.GetExecutingAssembly().GetManifestResourceNames();
             foreach (var file in soundFiles)
             {
-                if (!file.Contains(".wav")) continue;
+                if (!file.Contains(".wav") && !file.Contains(".mp3")) continue;
                 if (File.Exists(outputDir + "\\" + file)) continue;
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(file))
                 {
@@ -81,7 +83,8 @@ namespace RampTimerBuilder
                 Directory.CreateDirectory(appDir);
 
             var soundFiles = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-            var unpackedFiles = Directory.GetFiles(appDir, "*.wav");
+            // No wildcard support with Directory methods, must concat.
+            var unpackedFiles = Directory.EnumerateFiles(appDir, "*.wav").Concat(Directory.GetFiles(appDir, "*.mp3"));
             foreach (var file in unpackedFiles)
             {
                 var fiFile = new FileInfo(file);
@@ -203,6 +206,18 @@ namespace RampTimerBuilder
 
             cboAudioFile.Text = sender == btnBrowseForAudio ? ofd.FileName : cboAudioFile.Text;
             cboBGAudio.Text = sender == btnBrowseForBGAudio ? ofd.FileName : cboBGAudio.Text;
+
+            // Add an audio item to the appropriate combobox.
+            var comboBox = sender == btnBrowseForBGAudio ? cboBGAudio : cboAudioFile;
+            AudioItem item = new AudioItem();
+            item.Value = comboBox.Text;
+            item.Name = Path.GetFileName(ofd.FileName);
+
+            if (!comboBox.Items.Contains(item))
+            {
+                comboBox.Items.Add(item);
+                comboBox.SelectedItem = item;
+            }
         }
         #endregion
 
@@ -210,7 +225,7 @@ namespace RampTimerBuilder
         private void btnPlay_Click(object sender, EventArgs e)
         {
             //make sure that an audio file was selected and that one or more intervals have been created
-            if (cboAudioFile.Text.Trim().Length == 0) return;
+            if (cboAudioFile.SelectedItem == null) return;
             if (lbIntervals.Items.Count == 0) return;
 
             //if no intervals selected or stop was clicked, reset to top of interval list
@@ -244,9 +259,10 @@ namespace RampTimerBuilder
 
             if (cboBGAudio.Text.Trim().Length > 0)
             {
-                if (jbBGAudio == null || !jbBGAudio.IsBeingPlayed)
-                    jbBGAudio = jbBGAudio == null ? new JukeBox() : jbBGAudio;
-                jbBGAudio.FileName = cboBGAudio.SelectedItem == null ? cboBGAudio.Text.Trim() : ((AudioItem)cboBGAudio.SelectedItem).Value;
+                if (jbBGAudio == null || !jbBGAudio.Playing)
+                    jbBGAudio = jbBGAudio == null ? new JukeBox2() : jbBGAudio;
+
+                jbBGAudio.FileName = ((AudioItem)cboBGAudio.SelectedItem).Value;
                 jbBGAudio.TrackName = "BGAudio";
                 jbBGAudio.Play(true);
             }
@@ -332,8 +348,11 @@ namespace RampTimerBuilder
 
         private void StopAudio()
         {
-            if (jbBGAudio != null) jbBGAudio.StopPlaying();
-            if (jbIntervalAudio != null) jbIntervalAudio.StopPlaying();
+            this.Invoke(new MethodInvoker(() =>
+            {
+                if (jbBGAudio != null) jbBGAudio.StopPlaying();
+                if (jbIntervalAudio != null) jbIntervalAudio.StopPlaying();
+            }));
         }
         #endregion
 
@@ -442,7 +461,7 @@ namespace RampTimerBuilder
             }
             else
             {
-                AudioFile = cbo.SelectedItem == null ? cbo.Text.Trim() : ((AudioItem)cbo.SelectedItem).Value;
+                AudioFile = ((AudioItem)cbo.SelectedItem).Value;
             }
         }
 
@@ -491,11 +510,14 @@ namespace RampTimerBuilder
                 {
                     intCurrentRunTime = 0;
                     GetCBOText(cboAudioFile);
-                    jbIntervalAudio = new JukeBox();
-                    jbIntervalAudio.FileName = AudioFile;
-                    jbIntervalAudio.TrackName = "IntervalAudio";
-                    jbIntervalAudio.Play(false);
 
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        jbIntervalAudio = new JukeBox2();
+                        jbIntervalAudio.FileName = AudioFile;
+                        jbIntervalAudio.TrackName = "IntervalAudio";
+                        jbIntervalAudio.Play(false);
+                    }));
 
                     if (lbIntervals.InvokeRequired)
                     {
@@ -593,6 +615,7 @@ namespace RampTimerBuilder
                 }
                 catch (FileNotFoundException)
                 {
+                    Debugger.Break();
                     MessageBox.Show("The background audio file you selected cannot be found.", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                     return;
                 }
@@ -610,6 +633,7 @@ namespace RampTimerBuilder
             }
             catch (FileNotFoundException)
             {
+                Debugger.Break();
                 MessageBox.Show("The interval audio file you selected cannot be found.", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 return;
             }
@@ -691,17 +715,20 @@ namespace RampTimerBuilder
             if (cbo.Text.Trim().Length == 0) return;
 
             var appDir = Environment.GetEnvironmentVariable("LocalAppData") + "\\RampTimerBuilder";
-            if (!File.Exists(cbo.Text.Trim()) && !File.Exists(appDir + "\\RampTimerBuilder.Alarms." + cbo.Text.Trim()) && !File.Exists(appDir + "\\RampTimerBuilder.BGAudio." + cbo.Text.Trim()))
+            if (!File.Exists(((AudioItem)cbo.SelectedItem).Value) && !File.Exists(appDir + "\\RampTimerBuilder.Alarms." + cbo.Text.Trim()) && !File.Exists(appDir + "\\RampTimerBuilder.BGAudio." + cbo.Text.Trim()))
             {
+                Debugger.Break();
                 MessageBox.Show("The audio file you selected cannot be found.", "File Not Found", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 cbo.Select();
                 return;
             }
 
             var fi = new FileInfo(cbo.Text.Trim());
-            if (fi.Extension.ToLower() != ".wav")
+            var ext = fi.Extension.ToLower();
+
+            if (ext != ".wav" && ext != ".mp3")
             {
-                MessageBox.Show("You have selected an invalid file type. You must select a .wav file.", "Invalid File Type", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                MessageBox.Show("You have selected an invalid file type. You must select a .wav or .mp3 file.", "Invalid File Type", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 cbo.Select();
                 return;
             }
