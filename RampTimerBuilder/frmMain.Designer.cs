@@ -13,6 +13,10 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            // Dispose pattern cannot be properly implemented at this time.
+            //jbBGAudio?.Dispose();
+            //jbIntervalAudio?.Dispose();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -103,7 +107,7 @@
             // 
             // ofdAlarm
             // 
-            this.ofdAlarm.Filter = "wav files (*.wav)|*.wav";
+            this.ofdAlarm.Filter = "Supported Files|*.mp3;*.wav|wav files (*.wav)|*.wav|MP3 Files (*.mp3)|*.mp3";
             // 
             // btnBrowseForAudio
             // 
@@ -486,7 +490,7 @@
             // 
             // ofdBGAudio
             // 
-            this.ofdBGAudio.Filter = "wav files (*.wav)|*.wav";
+            this.ofdBGAudio.Filter = "Supported Files|*.mp3;*.wav|wav files (*.wav)|*.wav|MP3 Files (*.mp3)|*.mp3";
             // 
             // frmMain
             // 
